@@ -345,7 +345,7 @@ function continueExport() {
 function convertToCsv(exportData) {
   var lines = [];
   lines.push([
-    '"Type"',
+    `"${exportData.handle} Type"`,
     '"PledgeId"',
     '"Name"',
     '"Value"',
@@ -371,8 +371,8 @@ function convertToCsv(exportData) {
       pledge.page,
       exportData.pledgesPagesize,
       '"' + pledge.contains + '"',
-      '"' + pledge.alsoContains.map((ac) => { return ac.title || ''}).join(":") + '"', 
-      '"' + pledge.items.map((it) => { return `${it.kind || ''}:${it.title || ''}:${it.liner || ''}:${it.itemCustomName || ''}`}).join(",") + '"', 
+      '"' + pledge.alsoContains.map((ac) => { return ac.title || ''}).join(",") + '"', 
+      '"' + pledge.items.map((it) => { return `[kind:${it.kind || ''}][title:${it.title || ''}][liner:${it.liner || ''}][customname:${it.itemCustomName || ''}]`}).join(",") + '"', 
       `"https://robertsspaceindustries.com/account/pledges?page=${(pledge.page || 0).toString()}&pagesize=${(exportData.pledgesPagesize || 10).toString()}"`,
       '',
     ].join(','))});
@@ -382,6 +382,11 @@ function convertToCsv(exportData) {
     if (!buyback.pledgeId || buyback.pledgeId.trim() == '') {
       parts = (buyback.buybackHref || "").split('/')
       pid = parts[parts.length-1];
+    }
+
+    var buybackUrl = "";
+    if (!!buyback.buybackHref && buyback.buybackHref != "") {
+     buybackUrl = `"https://robertsspaceindustries.com${buyback.buybackHref}"`
     }
 
     exportData.buybacks.map((buyback) => { 
@@ -398,7 +403,7 @@ function convertToCsv(exportData) {
         '',
         '',
         `"https://robertsspaceindustries.com/account/buy-back-pledges?page=${(buyback.page || 0).toString()}&pagesize=${(exportData.buybacksPagesize || 100).toString()}"`,
-        buyback.buybackHref,
+        buybackUrl,
       ].join(','))});
 
     return lines.join("\n");
