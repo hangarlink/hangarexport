@@ -360,7 +360,7 @@ function convertToCsv(exportData) {
     '"BuybackUrl"',
   ].join(","));
 
-  exportData.pledges.map((pledge) => { 
+  (exportData.pledges || []).map((pledge) => { 
     lines.push([
       '"PLEDGE"',
       pledge.pledgeId, 
@@ -372,24 +372,23 @@ function convertToCsv(exportData) {
       exportData.pledgesPagesize,
       '"' + pledge.contains + '"',
       '"' + pledge.alsoContains.map((ac) => { return `[TITLE ${ac.title || ''}]` }).join(",") + '"', 
-      '"' + pledge.items.map((it) => { return `[KIND ${it.kind || ''}][TITLE ${it.title || ''}][LINER ${it.liner || ''}][CNAME ${it.itemCustomName || ''}]`}).join(",") + '"', 
+      '"' + pledge.items.map((it) => { return convertItem(it)}).join(",") + '"', 
       `"https://robertsspaceindustries.com/account/pledges?page=${(pledge.page || 0).toString()}&pagesize=${(exportData.pledgesPagesize || 10).toString()}"`,
       '',
     ].join(','))});
 
-    var pid = buyback.pledgeId
-
-    if (!buyback.pledgeId || buyback.pledgeId.trim() == '') {
-      parts = (buyback.buybackHref || "").split('/')
-      pid = parts[parts.length-1];
-    }
-
-    var buybackUrl = "";
-    if (!!buyback.buybackHref && buyback.buybackHref != "") {
-     buybackUrl = `"https://robertsspaceindustries.com${buyback.buybackHref}"`
-    }
-
-    exportData.buybacks.map((buyback) => { 
+    (exportData.buybacks || []).map((buyback) => { 
+      var pid = buyback.pledgeId
+      if (!buyback.pledgeId || buyback.pledgeId.trim() == '') {
+        parts = (buyback.buybackHref || "").split('/')
+        pid = parts[parts.length-1];
+      }
+  
+      var buybackUrl = "";
+      if (!!buyback.buybackHref && buyback.buybackHref != "") {
+       buybackUrl = `"https://robertsspaceindustries.com${buyback.buybackHref}"`
+      }
+      
       lines.push([
         '"BUYBACK"',
         pid, 
@@ -407,6 +406,23 @@ function convertToCsv(exportData) {
       ].join(','))});
 
     return lines.join("\n");
+}
+
+function convertItem(it) {
+  result = '';
+  if (!!it.kind && it.kind != '') {
+    result = `${result}[KIND ${it.kind}]`;
+  }
+  if (!!it.title && it.title != '') {
+    result = `${result}[TITLE ${it.title}]`;
+  }
+  if (!!it.liner && it.liner != '') {
+    result = `${result}[LINER ${it.liner}]`;
+  }
+  if (!!it.itemCustomName && it.itemCustomName != '') {
+    result = `${result}[CUSTOMNAME ${it.itemCustomName}]`;
+  }
+  return result;
 }
 
 function showButton() {
