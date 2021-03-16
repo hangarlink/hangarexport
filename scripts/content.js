@@ -372,7 +372,7 @@ function convertToCsv(exportData) {
       exportData.pledgesPagesize,
       '"' + pledge.contains + '"',
       '"' + pledge.alsoContains.map((ac) => { return ac.title || ''}).join(",") + '"', 
-      '"' + pledge.items.map((it) => { return `[kind:${it.kind || ''}][title:${it.title || ''}][liner:${it.liner || ''}][customname:${it.itemCustomName || ''}]`}).join(",") + '"', 
+      '"' + pledge.items.map((it) => { return `[KIND ${it.kind || ''}][TITLE ${it.title || ''}][LINER ${it.liner || ''}][CNAME ${it.itemCustomName || ''}]`}).join(",") + '"', 
       `"https://robertsspaceindustries.com/account/pledges?page=${(pledge.page || 0).toString()}&pagesize=${(exportData.pledgesPagesize || 10).toString()}"`,
       '',
     ].join(','))});
