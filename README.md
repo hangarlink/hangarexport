@@ -12,6 +12,7 @@
 * Includes all Ships and Ship Names found within each pledge.
 * Does NOT include Coupon Codes themselves, but does include the pledge without the codes.
 * Includes the handle.
+* Use at your own risk - no warranty or support is provided for this extension.
 
 **Always enbale Two Factor Authentication on your RSI account before using any chrome extensions.**
 
@@ -28,3 +29,21 @@
 * Allow chrome to download two files
 * The CSV file can be loaded into spreadsheet software
 * The JSON file can be further processed or uploaded to a location to be announced soon to assist with hanger management and ccu chain management.
+
+```
+Copyright (c) Hangar.link
+
+Redistribution and use in source and binary forms, with or without
+modification are permitted.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIEDi
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
