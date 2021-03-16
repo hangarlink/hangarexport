@@ -4,7 +4,7 @@
 
 * Zero external libraries used.
 * Vanilla Javascript.
-* Simple code Easy to audit.
+* Simple code, Easy to audit.
 * Makes no calls to RSI directly from Javascript.
 * Adds an Export button and a processing overlay during processing, but does not otherwise adjust the html of your hanger. future hanger changes will should not be impacted for example "Ship Naming".
 * Includes all relevant Pledge Data that can be found on each page
