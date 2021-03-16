@@ -312,8 +312,8 @@ function continueExport() {
     version: 1,
     handle: $scrapeHandle,
     pledges: $scrapePledges,
-    pledgePagesize: $scrapePledgesPagesize,
-    pledgeLastPage: $scrapePledgesPage,
+    pledgesPagesize: $scrapePledgesPagesize,
+    pledgesLastPage: $scrapePledgesPage,
     buybacks: $scrapeSkipBuybacks ? undefined : $scrapeBuybacks,
     buybacksPagesize: $scrapeSkipBuybacks ? undefined : $scrapeBuybacksPagesize,
     buybacksLastPage: $scrapeSkipBuybacks ? undefined : $scrapeBuybacksPage,
@@ -366,11 +366,11 @@ function convertToCsv(exportData) {
       '"' + pledge.pledgeConfigurationValue + '"',
       '"' + pledge.date + '"',
       pledge.page,
-      exportData.pledgePagesize,
+      exportData.pledgesPagesize,
       '"' + pledge.contains + '"',
       '"' + pledge.alsoContains.map((ac) => { return ac.title || ''}).join(":") + '"', 
       '"' + pledge.items.map((it) => { return `${it.kind || ''}:${it.title || ''}:${it.liner || ''}:${it.itemCustomName || ''}`}).join(",") + '"', 
-      `"https://robertsspaceindustries.com/account/pledges?page=${pledge.page.toString()}&pagesize=${exportData.pledgePagesize.toString()}"`,
+      `"https://robertsspaceindustries.com/account/pledges?page=${(pledge.page || 0).toString()}&pagesize=${(exportData.pledgesPagesize || 10).toString()}"`,
       '',
     ].join(','))});
 
@@ -390,11 +390,11 @@ function convertToCsv(exportData) {
         '',
         '"' + buyback.date + '"',
         buyback.page,
-        exportData.buybackPagesize,
+        exportData.buybacksPagesize,
         '"' + buyback.contains + '"',
         '',
         '',
-        `"https://robertsspaceindustries.com/account/buy-back-pledges?page=${buyback.page.toString()}&pagesize=${exportData.buybackPagesize.toString()}"`,
+        `"https://robertsspaceindustries.com/account/buy-back-pledges?page=${(buyback.page || 0).toString()}&pagesize=${(exportData.buybacksPagesize || 100).toString()}"`,
         buyback.buybackHref,
       ].join(','))});
 
@@ -458,11 +458,11 @@ function updateProgress() {
   var progress = document.getElementById("update-progress");
   if (!!progress) {
     if ($scrapeType == "PLEDGES") {
-      progress.innerText =  `Exporting Pledges Page ${$scrapePledgesPage} ...` ;
+      progress.innerText =  `Processing Pledges Page ${$scrapePledgesPage} ...` ;
     } else if ($scrapeType == "BUYBACKS") {
-      progress.innerText =  `Exporting Buybacks Page ${$scrapeBuybacksPage} ...` ;
+      progress.innerText =  `Processing Buybacks Page ${$scrapeBuybacksPage} ...` ;
     } else {
-      progress.innerText = 'Exporting ...'
+      progress.innerText = 'Processing ...'
     }
   }
 }
