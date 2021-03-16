@@ -7,7 +7,7 @@
 * Simple code, Easy to audit.
 * Makes no calls to RSI directly from Javascript.
 * Adds an Export button and a processing overlay during processing, but does not otherwise adjust the html of your hanger. future hanger changes will should not be impacted for example "Ship Naming".
-* Includes all relevant Pledge Data that can be found on each page including Ship pledges, Package pledges, Upgrade pledges, and all other kinds of pledges.
+* Includes all relevant Pledge Data that can be found on each page including Standalone Ship pledges, Package pledges, Upgrade pledges, and all other kinds of pledges.
 * Includes all relevant Buyback Data that can be found on each page.
 * Includes all Ships and Ship Names found within each pledge.
 * Does NOT include Coupon Codes themselves, but does include the pledge without the codes.
