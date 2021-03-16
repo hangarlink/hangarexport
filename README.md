@@ -22,6 +22,7 @@
 
 * Ensure this code is not compressed or zipped (unzip if required)
 * Download and install chrome
+* Double check you have no other extensions loaded that may affect the RSI website.
 * Double check you have 2FA enabled on your RSI account
 * Double check your RSI password is not the same as your Email password if you use Email based 2FA
 * Type the following into the address bar: chrome://extensions
