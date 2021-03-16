@@ -12,7 +12,7 @@
 * Includes all Ships and Ship Names found within each pledge.
 * Does NOT include Coupon Codes themselves, but does include the pledge without the codes.
 * Includes handles.
-* Your data is yours, this extension does not upload or send your data anywhere, you are free to use your csv and json files as you choose.
+* Your data is yours. This extension does not upload or send your data anywhere, you are free to use your csv and json files as you choose.
 * Use at your own risk - no warranty or support is provided for this extension.
 * You can remove this extension any time by opening up a new chrome tab to chrome://extensions and clicking remove
 
