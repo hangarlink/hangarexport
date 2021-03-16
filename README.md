@@ -11,7 +11,7 @@
 * Includes all relevant Buyback Data that can be found on each page.
 * Includes all Ships and Ship Names found within each pledge.
 * Does NOT include Coupon Codes themselves, but does include the pledge without the codes.
-* Includes the handle.
+* Includes handles.
 * Use at your own risk - no warranty or support is provided for this extension.
 
 **Always enable Two Factor Authentication on your RSI account before using ANY chrome extension. Note, Email based 2fa is not as secure as Google Authenticator or Authy based 2fa**
