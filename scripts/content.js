@@ -2,7 +2,7 @@
 var $scrapeDelay = 1500;
 var $scrapeRandom = 3000;
 
-// scrape setttings
+// scrape settings
 var $scrapeHandle = null;
 var $scrapeType = null;
 var $scrapeSkipBuybacks = false;
