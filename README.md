@@ -16,7 +16,7 @@
 
 **Always enable Two Factor Authentication on your RSI account before using ANY chrome extension. Note, Email based 2fa is not as secure as Google Authenticator or Authy based 2fa**
 
-**NEVER SHARE A PASSWORD WITH YOUR EMAIL ACCOUNT AND YOUR RSI ACCOUNT**
+**NEVER SHARE A PASSWORD BETWEEN YOUR EMAIL ACCOUNT AND YOUR RSI ACCOUNT**
 
 * Ensure this code is not compressed or zipped (unzip if required)
 * Download and install chrome
