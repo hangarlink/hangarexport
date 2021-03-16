@@ -13,6 +13,7 @@
 * Does NOT include Coupon Codes themselves, but does include the pledge without the codes.
 * Includes handles.
 * Use at your own risk - no warranty or support is provided for this extension.
+* You can remove this extension any time by opening up a new chrome tab to chrome://extensions and clicking remove
 
 **Always enable Two Factor Authentication on your RSI account before using ANY chrome extension. Note, Email based 2fa is not as secure as Google Authenticator or Authy based 2fa**
 
