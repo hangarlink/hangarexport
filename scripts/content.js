@@ -160,6 +160,7 @@ function cancelScrape() {
     function () {
       showButton();
       hideOverlay();
+      updateProgress();
     }
   );
 }
@@ -197,6 +198,7 @@ function continueScrapePledges() {
     if (!!$scrapeHandle && $scrapeHandle != parsed.handle) {
       alert("hanger mismatch");
       cancelScrape();
+      updateProgress();
     }
 
     parsed.pledges.map((pledge) => {
@@ -337,6 +339,7 @@ function continueExport() {
   csvLink.click();
   csvLink.setAttribute("href", "");
   cancelScrape();
+  updateProgress();
 }
 
 function convertToCsv(exportData) {
