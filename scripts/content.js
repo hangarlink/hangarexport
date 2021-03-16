@@ -17,14 +17,6 @@ var $scrapeBuybacks = [];
 var $scrapeBuybacksPage = 1;
 var $scrapeBuybacksPagesize = 100;
 
-chrome.runtime.onMessage.addListener(function (request, sender) {
-  if (request.action == "export") {
-    startScrape();
-  } else {
-    console.log({ unknownRequest: request });
-  }
-});
-
 renderButton();
 renderOverlay();
 
@@ -104,7 +96,6 @@ function getPosition() {
 }
 
 function startScrape() {
-  // start from the beginning.
   $scrapeHandle = undefined;
   $scrapeType = "PLEDGES";
   $scrapeSkipBuybacks = false;
