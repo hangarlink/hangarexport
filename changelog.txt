@@ -1,0 +1,9 @@
+v0.2
+====
+Initial Release.
+
+v0.3
+====
+2021/6/1 Repaired content.js regular expressions to handle origin customisation html.
+2021/6/1 Captured giftable status of each pledge.
+2021/6/1 Moved json file version to 2 to cater for the new giftable field.

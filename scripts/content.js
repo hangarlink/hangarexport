@@ -302,7 +302,7 @@ function continueScrapeBuybacks() {
 function continueExport() {
   var exportData = {
     type: "hangarexport",
-    version: 1,
+    version: 2,
     handle: $scrapeHandle,
     pledges: $scrapePledges,
     pledgesPagesize: $scrapePledgesPagesize,
@@ -528,7 +528,8 @@ function getRandomInt(min, max) {
 }
 
 function parsePledgePage(data, parsed, page) {
-  var singleline = data.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ");
+  // remove all newlines and replace any ul /ul li and li related to customizations of origin series ships so we can locate items by <ul> <li></li>* </ul>
+  var singleline = data.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ").replace(/<ul>\s?(<li class.+?<\/li>)\s?<\/ul>/g, "<nonitemul>$1</nonitemul>").replace(/<li class(.+?)<\/li>/g, "<nonitemli class$1</nonitemli>");
 
   var handleRes = singleline.match(
     /\<span class=\"c-account-sidebar__profile-info-handle"\>(.*?)\<\/span\>/i
@@ -558,6 +559,18 @@ function parsePledgePage(data, parsed, page) {
   } else {
     return "items block not found";
   }
+
+  // strip out the customisation options from the 300 series as they
+  // contain <li> and </li>
+  //<li class="custo-choice">Monarch</li>
+  
+  
+
+
+//  itemsBlock = itemsBlock.replace(/<li class(.+?)<\/li>/g, "<nonitemli class$1</nonitemli>");
+
+
+
 
   var re = /<li>(.+?)<\/li>/g;
   var matches;
@@ -620,16 +633,6 @@ function parsePledgeItem(singleLine) {
 }
 
 function parseItem(singleLine, page) {
-  var pledgeIdRes = singleLine.match(/"js-pledge-id" value="([0-9]+?)">/i);
-  var pledgeId = "";
-  if (!!pledgeIdRes) {
-    pledgeId = pledgeIdRes[1].trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "pledgeId not found" });
-    return null;
-  }
-
   var pledgeIdRes = singleLine.match(/"js-pledge-id" value="([0-9]+?)">/i);
   var pledgeId = "";
   if (!!pledgeIdRes) {
@@ -730,6 +733,12 @@ function parseItem(singleLine, page) {
     }
   }
 
+  var pledgeGiftable = false;
+  var pledgeGiftableRes = singleLine.match(/js-gift/i);
+  if (!!pledgeGiftableRes) {
+    pledgeGiftable = true;
+  }
+
   return {
     pledgeId: pledgeId,
     pledgeName: pledgeName,
@@ -739,6 +748,7 @@ function parseItem(singleLine, page) {
     contains: contains,
     items: pledgeItems,
     alsoContains: pledgeAlsoContains,
+    giftable: pledgeGiftable,
     page: page,
   };
 }
