@@ -2,6 +2,28 @@
 
 ## Download your RSI Pledge and Buyback data into JSON and CSV files
 
+## How to install this chrome extension
+
+* Ensure this code is not compressed or zipped (unzip if required)
+* Open chrome.
+* Double check you have no other extensions loaded that may affect the RSI website.
+* Double check that HangarXPLOR is disabled if you have used that extension previously.
+* Type the following into the address bar: chrome://extensions
+* Switch on developer mode (toggle on the right top called developer mode)
+* Click the button Load unpacked
+* Navigate to the folder containing the extracted code
+
+## How to use this chrome extension
+
+* Open a new tab and browse to https://robertsspaceindustries.com/account/pledges
+* Click the export button on the left hand sidebar menu
+* Wait for chrome to work its way through your pledge and buybacks pages
+* Allow chrome to download two files
+* The CSV file can be loaded into spreadsheet software
+* The JSON file can be further processed on https://hangar.link
+
+## More about this chrome extension
+
 * Zero external libraries used.
 * Vanilla Javascript.
 * Simple code, Easy to audit.
@@ -19,23 +41,6 @@
 **Always enable Two Factor Authentication on your RSI account before using ANY chrome extension. Note, Email based 2fa is not as secure as Google Authenticator or Authy based 2fa**
 
 **NEVER SHARE A PASSWORD BETWEEN YOUR EMAIL ACCOUNT AND YOUR RSI ACCOUNT**
-
-* Ensure this code is not compressed or zipped (unzip if required)
-* Download and install chrome
-* Double check you have no other extensions loaded that may affect the RSI website.
-* Double check that HangarXPLOR is disabled if you have used that extension previously.
-* Double check you have 2FA enabled on your RSI account
-* Double check your RSI password is not the same as your Email password if you use Email based 2FA
-* Type the following into the address bar: chrome://extensions
-* Switch on developer mode (toggle on the right top called developer mode)
-* Click the button Load unpacked
-* Navigate to the folder containing the extracted code
-* Open a new tab and browse to https://robertsspaceindustries.com/account/pledges
-* Click the export button on the left hand sidebar menu
-* Wait for chrome to work its way through your pledge and buybacks pages
-* Allow chrome to download two files
-* The CSV file can be loaded into spreadsheet software
-* The JSON file can be further processed or uploaded to a location to be announced soon to assist with hanger management and ccu chain management.
 
 ## Licence 
 
