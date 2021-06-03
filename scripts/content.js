@@ -177,13 +177,11 @@ function continueScrapePledges() {
       window.location = "https://robertsspaceindustries.com/account/pledges";
     }, 2000);
   } else {
-    var data = document.documentElement.outerHTML;
+
     var parsed = { handle: "", isLastPage: false, pledges: [], buybacks: [] };
     result = parsePledgePage(
-      data,
       parsed,
       $scrapePledgesPage,
-      $scrapePledgesPagesize
     );
 
     if (!!$scrapeHandle && $scrapeHandle != parsed.handle) {
@@ -253,13 +251,11 @@ function continueScrapeBuybacks() {
     alert("error: buybacks url mismatch");
     cancelScrape();
   } else {
-    var data = document.documentElement.outerHTML;
+
     var parsed = { handle: "", isLastPage: false, pledges: [], buybacks: [] };
     result = parseBuybackPage(
-      data,
       parsed,
       $scrapeBuybacksPage,
-      $scrapeBuybacksPagesize
     );
 
 
@@ -527,101 +523,74 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function parsePledgePage(data, parsed, page) {
-  // remove all newlines and replace any ul /ul li and li related to customizations of origin series ships so we can locate items by <ul> <li></li>* </ul>
-  var singleline = data.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ").replace(/<ul>\s?(<li class.+?<\/li>)\s?<\/ul>/g, "<nonitemul>$1</nonitemul>").replace(/<li class(.+?)<\/li>/g, "<nonitemli class$1</nonitemli>");
-
-  var handleRes = singleline.match(
-    /\<span class=\"c-account-sidebar__profile-info-handle"\>(.*?)\<\/span\>/i
-  );
-  if (!!handleRes) {
-    parsed.handle = handleRes[1];
+function parsePledgePage(parsed, page) {
+  var handle = document.getElementsByClassName('c-account-sidebar__profile-info-handle')[0].innerText;
+  if (!!handle && handle !== "") {
+    parsed.handle = handle;
   } else {
     return "handle not found";
   }
 
-  // detect the last page
-  // <a class="raquo btn" href="/account/pledges?page=4&pagesize=10"><span class="trans-02s trans-opacity"></span></a>
-  var raquoRes = singleline.match(/<a class="raquo btn"/i);
+  var raquoRes = document.getElementsByClassName('raquo')[0];
   if (!raquoRes) {
     parsed.isLastPage = true;
-  }
+  } 
+
+  var data = document.documentElement.outerHTML;
+  var singleline = data.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ");
 
   if (/Your hangar is empty/.test(singleline)) {
     parsed.isLastPage = true;
     return "empty";
   }
 
-  var itemsBlockRes = singleline.match(/<ul class="list-items">(.+)<\/ul>/);
-  var itemsBlock = "";
-  if (!!itemsBlockRes) {
-    itemsBlock = itemsBlockRes[1];
-  } else {
+  var itemsUlBlock = document.getElementsByClassName('list-items')[0];
+  if (!itemsUlBlock) {
     return "items block not found";
   }
 
-  // strip out the customisation options from the 300 series as they
-  // contain <li> and </li>
-  //<li class="custo-choice">Monarch</li>
-  
-  
-
-
-//  itemsBlock = itemsBlock.replace(/<li class(.+?)<\/li>/g, "<nonitemli class$1</nonitemli>");
-
-
-
-
-  var re = /<li>(.+?)<\/li>/g;
-  var matches;
-  while ((matches = re.exec(itemsBlock)) != null) {
-    var string = matches[1].trim();
-    if (
-      string != "<del>{$item.name}</del>" &&
-      string != "<ins>{$item.name}</ins>"
-    ) {
-      pledge = parseItem(matches[1], page);
-      if (!!pledge) {
-        parsed.pledges.push(pledge);
-      } else {
-        return "error parsing pledge";
-      }
+  var items = itemsUlBlock.children;
+  for (var i = 0; i < items.length; i++) {
+    p = parseItem(items[i], page);
+    if (!!p) {
+      parsed.pledges.push(p);
+    } else {
+      console.log({errorParsingPlege: items[i]});
     }
-  }
+  } 
 }
 
-function parsePledgeItem(singleLine) {
-  var itemCustomNameRes = singleLine.match(
-    /<div class="custom-name-text">(.*?)<\/div>/i
-  );
+function parsePledgeItem(item) {
   var itemCustomName = "";
-  if (!!itemCustomNameRes) {
-    itemCustomName = itemCustomNameRes[1].trim();
+  {
+    var itemCustomNameNode = item.getElementsByClassName('custom-name-text');
+    if (itemCustomNameNode.length == 1) {
+      itemCustomName = itemCustomNameNode[0].innerText.trim();
+    }
   }
-
-  var itemTitleRes = singleLine.match(/<div class="title">(.*?)<\/div>/i);
+  
   var itemTitle = "";
-  if (!!itemTitleRes) {
-    itemTitle = itemTitleRes[1].trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "itemTitle not found" });
-    return null;
+  {
+    var itemTitleNode = item.getElementsByClassName('title');
+    if (itemTitleNode.length == 1) {
+      itemTitle = itemTitleNode[0].innerText.trim();
+    }
   }
-
-  var itemKindRes = singleLine.match(/<div class="kind">(.*?)<\/div>/i);
+    
   var itemKind = "";
-  if (!!itemKindRes) {
-    itemKind = itemKindRes[1].trim();
+  {
+    var itemKindNode = item.getElementsByClassName('kind');
+    if (itemKindNode.length == 1) {
+      itemKind = itemKindNode[0].innerText.trim();
+    }
   }
 
-  var itemLinerRes = singleLine.match(/<div class="liner">(.*?)<\/div>/i);
   var itemLiner = "";
-  if (!!itemLinerRes) {
-    itemLiner = itemLinerRes[1]
-      .trim()
-      .replace(/<span>/i, "")
-      .replace(/<\/span>/i, "");
+  {
+    var itemLinerNode = item.getElementsByClassName('liner');
+    if (itemLinerNode.length == 1) {
+      itemLiner = itemLinerNode[0].innerText.trim();
+    }
   }
 
   return {
@@ -632,111 +601,106 @@ function parsePledgeItem(singleLine) {
   };
 }
 
-function parseItem(singleLine, page) {
-  var pledgeIdRes = singleLine.match(/"js-pledge-id" value="([0-9]+?)">/i);
+function parseAlsoContainsItem(alsoContainsNode) {
+  var alsoContains = [];
+  {
+    var alsoContainsItemsNode = alsoContainsNode.getElementsByClassName('item');
+    for (var j = 0; j < alsoContainsItemsNode.length; j++) {true
+      var titleNodes = alsoContainsItemsNode[j].getElementsByClassName('title');
+      if (titleNodes.length == 1) {
+        alsoContains.push({"title": titleNodes[0].innerText.trim()});
+       }
+     }
+  }
+  return alsoContains;
+}
+
+function parseItem(item, page) {
   var pledgeId = "";
-  if (!!pledgeIdRes) {
-    pledgeId = pledgeIdRes[1].trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "pledgeId not found" });
-    return null;
+  {
+    var jsPledgeIdNode = item.getElementsByClassName('js-pledge-id');
+    if (jsPledgeIdNode.length == 1) {
+      pledgeId = jsPledgeIdNode[0].value.trim();
+    } else {
+      console.log({ error: "pledgeId not found" });
+      return null;
+    }
   }
-
-  var pledgeNameRes = singleLine.match(/"js-pledge-name" value="(.+?)">/i);
+  
   var pledgeName = "";
-  if (!!pledgeNameRes) {
-    pledgeName = pledgeNameRes[1].trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "pledgeName not found" });
-    return null;
+  {
+    var jsPledgeNameNode = item.getElementsByClassName('js-pledge-name');
+    if (jsPledgeNameNode.length == 1) {
+      pledgeName = jsPledgeNameNode[0].value.trim();
+    } else {
+      console.log({ error: "pledgeName not found" });
+      return null;
+    }
   }
+  //strip out coupon codes
+  pledgeName = pledgeName.split(":")[0];
 
-  //strip out reward codes
-  pledgeName = pledgeName.split(":")[0]
-
-  var pledgeValueRes = singleLine.match(/"js-pledge-value" value="(.+?)">/i);
   var pledgeValue = "";
-  if (!!pledgeValueRes) {
-    pledgeValue = pledgeValueRes[1].trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "pledgeValue not found" });
-    return null;
-  }
-
-  var pledgeConfigurationValueRes = singleLine.match(
-    /"js-pledge-configuration-value" value="(.+?)">/i
-  );
-  var pledgeConfigurationValue = "";
-  if (!!pledgeConfigurationValueRes) {
-    pledgeConfigurationValue = pledgeConfigurationValueRes[1].trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "pledgeConfigurationValue not found" });
-    return null;
-  }
-
-  var dateRes = singleLine.match(
-    /<div class="date-col"> *<label>Created:<\/label>(.+?)<\/div>/i
-  );
-  var date = "";
-  if (!!dateRes) {
-    date = dateRes[1].trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "date not found" });
-    return null;
-  }
-
-  var containsRes = singleLine.match(
-    /div class="items-col"> *<label>Contains:<\/label>(.+?)<\/div>/i
-  );
-  var contains = "";
-  if (!!containsRes) {
-    contains = containsRes[1].trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "contains not found" });
-    return null;
-  }
-
-  var pledgeItems = [];
-
-  var re = /<div class="item ">(.+?)<\/div> ?<\/div> ?<\/div>/g;
-  var matches;
-  while ((matches = re.exec(singleLine)) != null) {
-    pledgeItem = parsePledgeItem(matches[0]);
-    if (!!pledgeItem) {
-      pledgeItems.push(pledgeItem);
+  {
+    var jsPledgeValueNode = item.getElementsByClassName('js-pledge-value');
+    if (jsPledgeValueNode.length == 1) {
+      pledgeValue = jsPledgeValueNode[0].value.trim();
     }
   }
 
-  var re = /<div class="item has-custom-name">(.+?)<\/div> ?<\/div> ?<\/div>/g;
-  var matches;
-  while ((matches = re.exec(singleLine)) != null) {
-    pledgeItem = parsePledgeItem(matches[0]);
-    if (!!pledgeItem) {
-      pledgeItems.push(pledgeItem);
+  var pledgeConfigurationValue = "";
+  {
+    var jsPledgeConfigurationValueNode = item.getElementsByClassName('js-pledge-configuration-value');
+    if (jsPledgeConfigurationValueNode.length == 1) {
+      pledgeConfigurationValue = jsPledgeConfigurationValueNode[0].value.trim();
+    }
+  }
+
+  var date = "";
+  {
+    var dateNode = item.getElementsByClassName('date-col');
+    if (dateNode.length == 1) {
+      date = dateNode[0].innerText.trim().replace(/\r?\n|\r/g, "").replace(/Created\:/g, "");
+    } else {
+      console.log({ error: "dateNode not found" });
+      return null;
+    }
+  }
+
+  var contains = "";
+  {
+    var containsNode = item.getElementsByClassName('items-col');
+    if (containsNode.length == 1) {
+      contains = containsNode[0].innerText.trim().replace(/\r?\n|\r/g, "").replace(/Contains\:/g, "");;
+    }
+  }
+
+  var pledgeItems = [];
+  {
+    var pledgeItemsNode = item.getElementsByClassName('item');
+    for (var y = 0; y < pledgeItemsNode.length; y++) {
+      pledgeItem = parsePledgeItem(pledgeItemsNode[y]);
+      if (!!pledgeItem) {
+        pledgeItems.push(pledgeItem);
+      } else {
+        console.log({error: "error parsing pledge item"});
+        return null;
+      }
     }
   }
 
   var pledgeAlsoContains = [];
-  var alsoContainsRes = singleLine.match(/Also Contains(.*?)class="cboth"/i);
-  if (!!alsoContainsRes) {
-    var alsoContains = alsoContainsRes[1].trim();
-    var re = /<div class="title">(.+?)<\/div>/g;
-    var matches;
-    while ((matches = re.exec(alsoContains)) != null) {
-      pledgeAlsoContains.push({ title: matches[1].trim() });
+   {
+     var alsoContainsNode = item.getElementsByClassName('without-images');
+     if (alsoContainsNode.length == 1) {
+      pledgeAlsoContains = parseAlsoContainsItem(alsoContainsNode[0]);
     }
-  }
+   }
 
   var pledgeGiftable = false;
-  var pledgeGiftableRes = singleLine.match(/js-gift/i);
-  if (!!pledgeGiftableRes) {
-    pledgeGiftable = true;
+  var pledgeGiftableNode = item.getElementsByClassName('js-gift')[0];
+  if (!!pledgeGiftableNode) {
+     pledgeGiftable = true;
   }
 
   return {
@@ -753,102 +717,99 @@ function parseItem(singleLine, page) {
   };
 }
 
-function parseBuybackPage(data, parsed, page) {
+
+function parseBuybackPage(parsed, page) {
+  var data = document.documentElement.outerHTML;
   var singleline = data.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ");
-  var handleRes = singleline.match(
-    /\<span class=\"c-account-sidebar__profile-info-handle"\>(.*?)\<\/span\>/i
-  );
-  if (!!handleRes) {
-    parsed.handle = handleRes[1];
+
+
+  var handle = document.getElementsByClassName('c-account-sidebar__profile-info-handle')[0].innerText;
+  if (!!handle && handle !== "") {
+    parsed.handle = handle;
   } else {
-    console.log({ error: "handle not found" });
     return "handle not found";
   }
 
-  // last page detection via next arrow link
-  // <a class="raquo btn" href="/account/pledges?page=4&pagesize=10"><span class="trans-02s trans-opacity"></span></a>
-  var raquoRes = singleline.match(/<a class="raquo btn"/i);
+  var raquoRes = document.getElementsByClassName('raquo')[0];
   if (!raquoRes) {
     parsed.isLastPage = true;
-  }
+  } 
+
+  var data = document.documentElement.outerHTML;
+  var singleline = data.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ");
 
   if (/No pledges available/.test(singleline)) {
     parsed.isLastPage = true;
     return "empty";
   }
 
-  var re = /<article class="pledge" ?>(.+?)<\/article>/g;
-  var matches;
-  while ((matches = re.exec(singleline)) != null) {
-    buyback = parseArticle(matches[1], page);
+  var articleNodes = document.getElementsByTagName('article');
+  for (var s = 0; s < articleNodes.length; s++) {
+    buyback = parseArticle(articleNodes[s], page);
     if (!!buyback) {
       parsed.buybacks.push(buyback);
     } else {
-      return "error parsing buyback";
+      console.log({errorParsingArticle: articleNodes[i]});
     }
-  }
+  } 
 }
 
-function parseArticle(singleLine, page) {
-  var nameRes = singleLine.match(/<h1>(.+?)<\/h1>/i);
+function parseArticle(articleNode, page) {
   var name = "";
-  if (!!nameRes) {
-    name = nameRes[1]
-      .trim()
-      .replace(/<span class="upgraded"> - upgraded<\/span>/, "");
-  } else {
-    console.log(singleLine);
-    console.log({ error: "name not found" });
-    return null;
+  {
+    var nameNode = articleNode.getElementsByTagName('h1');
+    if (nameNode.length == 1) {
+      name = nameNode[0].innerText.replace(/\r?\n|\r/g, " ").replace(/\ \- upgraded/gi, " ").trim();
+    } else {
+      console.log({ error: "name not found" });
+      return null;
+    }
   }
 
-  var lastRes = singleLine.match(
-    /<dl> <dt>Last Modified<\/dt> <dd>(.+?)<\/dd><dd> <\/dd><dt>Contained<\/dt> <dd>(.+?)<\/dd><dd> <\/dd><\/dl>/i
-  );
   var lastModified = "";
   var contained = "";
-  if (!!lastRes) {
-    lastModified = (lastRes[1] || "").trim();
-    contained = (lastRes[2] || "").trim();
-  } else {
-    console.log(singleLine);
-    console.log({ error: "lastModified block not found" });
-    return null;
+  {
+    var dataNode = articleNode.getElementsByTagName('dd');
+    if (dataNode.length == 4) {
+      lastModified = dataNode[0].innerText.trim();
+      contained = dataNode[2].innerText.trim();
+    } else if (dataNode.length == 2) {
+      lastModified = dataNode[0].innerText.trim();
+      contained = dataNode[1].innerText.trim();
+    } else {
+      console.log({error: "dd not found"});
+      return null;
+    }
   }
 
-  var upgradeRes = singleLine.match(
-    /<a href="" class="holosmallbtn js-open-ship-upgrades" data-pledgeid=\"?(\d+?)\"? data-fromshipid="(\d+?)" data-toshipid="(\d+?)" data-toskuId="(\d+?)">/i
-  );
   var pledgeId = "";
   var fromShipId = "";
   var toShipId = "";
   var toSkuId = "";
   var href = "";
-  if (!!upgradeRes) {
-    pledgeId = upgradeRes[1].trim();
-    fromShipId = upgradeRes[2].trim();
-    toShipId = upgradeRes[3].trim();
-    toSkuId = upgradeRes[4].trim();
-  } else {
-    var hrefRes = singleLine.match(/<a class="holosmallbtn" href="(.+?)">/i);
-    if (!!hrefRes) {
-      href = hrefRes[1].trim();
+  {
+    var holosmallbtn = articleNode.getElementsByClassName('holosmallbtn')[0];
+    if (!!holosmallbtn) {
+      pledgeId = holosmallbtn.getAttribute('data-pledgeId');
+      fromShipId = holosmallbtn.getAttribute('data-fromShipId');
+      toShipId = holosmallbtn.getAttribute('data-toShipId');
+      toSkuId = holosmallbtn.getAttribute('data-toSkuId');
+      href = holosmallbtn.getAttribute('href');
     } else {
-      console.log(singleLine);
-      console.log({ error: "cant find upgrade or href data" });
+      console.log({ error: "holosmallbtn not found" });
       return null;
     }
   }
 
   return {
-    pledgeName: name,
-    date: lastModified,
-    contains: contained,
-    pledgeId: pledgeId,
-    fromShipId: fromShipId,
-    toShipId: toShipId,
-    toSkuId: toSkuId,
-    buybackHref: href,
+    pledgeName: name || "",
+    date: lastModified || "",
+    contains: contained || "",
+    pledgeId: pledgeId || "",
+    fromShipId: fromShipId || "",
+    toShipId: toShipId || "",
+    toSkuId: toSkuId || "",
+    buybackHref: href || "",
     page: page,
   };
 }
