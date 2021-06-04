@@ -703,6 +703,12 @@ function parseItem(item, page) {
      pledgeGiftable = true;
   }
 
+  var pledgeMeltable = false;
+  var pledgeMeltableNode = item.getElementsByClassName('js-reclaim')[0];
+  if (!!pledgeMeltableNode) {
+    pledgeMeltable = true;
+  }
+
   return {
     pledgeId: pledgeId,
     pledgeName: pledgeName,
@@ -713,6 +719,7 @@ function parseItem(item, page) {
     items: pledgeItems,
     alsoContains: pledgeAlsoContains,
     giftable: pledgeGiftable,
+    meltable: pledgeMeltable,
     page: page,
   };
 }
