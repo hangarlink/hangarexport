@@ -16,3 +16,7 @@ v0.5
 ====
 2021/6/5 Added a check for the melt button.
 
+v0.6
+====
+2021/7/15 Added a check for Hangar XPLORer which conflicts with this extension as it alters the hangar html.
+

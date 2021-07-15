@@ -95,6 +95,17 @@ function getPosition() {
   return { type: type, page: page, pagesize: pagesize };
 }
 
+function detectConflictingExtensions() {
+
+  var hangarXploreNode = document.getElementsByClassName('js-bulk-ui');
+  if (hangarXploreNode.length == 1) {
+    alert("ERROR: Hangar XPLORer detected. Please disable Hangar XPLORer and any other hangar extensions and try again.");
+    return true;
+  }
+
+  return false;
+}
+
 function startScrape() {
   $scrapeHandle = undefined;
   $scrapeType = "PLEDGES";
@@ -123,6 +134,7 @@ function startScrape() {
     }
   );
 }
+
 
 function cancelScrape() {
   $scrapeHandle = null;
@@ -185,7 +197,7 @@ function continueScrapePledges() {
     );
 
     if (!!$scrapeHandle && $scrapeHandle != parsed.handle) {
-      alert("hanger mismatch");
+      alert("ERROR: Hanger mismatch.");
       cancelScrape();
       updateProgress();
     }
@@ -217,6 +229,13 @@ function continueScrapePledges() {
       );
     } else {
       // its the last page
+
+      if($scrapePledges.length == 0) {
+        alert("ERROR: No pledges found. Please disable all other hangar extensions and try again.");
+        cancelScrape();
+        return;
+      }
+
       if ($scrapeSkipBuybacks) {
         continueExport();
       } else {
@@ -248,7 +267,7 @@ function continueScrapeBuybacks() {
     position.page != $scrapeBuybacksPage ||
     position.pagesize != $scrapeBuybacksPagesize
   ) {
-    alert("error: buybacks url mismatch");
+    alert("ERROR: Buybacks url mismatch.");
     cancelScrape();
   } else {
 
@@ -260,7 +279,7 @@ function continueScrapeBuybacks() {
 
 
     if (!!$scrapeHandle && $scrapeHandle != parsed.handle) {
-      alert("handle mismatch");
+      alert("ERROR: Handle mismatch.");
       cancelScrape();
     }
 
@@ -453,8 +472,10 @@ function renderButton() {
   link.addEventListener(
     "click",
     function () {
-      startScrape();
-      showOverlay();
+      if (!detectConflictingExtensions()) {
+        startScrape();
+        showOverlay();
+      }
     },
     false
   );
